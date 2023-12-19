@@ -1,18 +1,19 @@
 "use client";
 import Image from "next/image";
 import { useState } from "react";
+import { signIn } from "next-auth/react";
+import { redirect } from "next/dist/server/api-utils";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginProgress, setLoginProgress] = useState(false);
-  const [error, setError] = useState(false);
 
   async function handleFormSubmit(event) {
     event.preventDefault();
     setLoginProgress(true);
 
-    await signIn("credentials", { email, password });
+    await signIn("credentials", { email, password, callbackUrl: "/" });
 
     setLoginProgress(false);
   }
@@ -43,7 +44,11 @@ export default function LoginPage() {
         <div className="text-center my-4 text-gray-500">
           or login with provider
         </div>
-        <button className="flex gap-4 justify-center">
+        <button
+          type="button"
+          onClick={() => signIn("google", { callbackUrl: "/" })}
+          className="flex gap-4 justify-center"
+        >
           <Image src="/google.png" alt="" width={24} height={24} />
           Login with google
         </button>
